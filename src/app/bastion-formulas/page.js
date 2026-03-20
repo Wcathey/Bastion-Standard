@@ -1,5 +1,5 @@
-import ComingSoon from "@/components/ComingSoon/ComingSoon";
+import FormulaSection from "@/components/LandingPage/FormulaSection";
 
 export default function BastionFormulasPage() {
-  return <ComingSoon />;
+  return <FormulaSection />;
 }

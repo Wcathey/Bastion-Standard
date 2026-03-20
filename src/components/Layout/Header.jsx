@@ -20,6 +20,7 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="transition-all duration-300 mb-0.5 sm:mb-1"
                 aria-label="Toggle Menu"
+                suppressHydrationWarning
               >
                 <div className="w-7 h-7 sm:w-9 sm:h-9 flex flex-col justify-center items-center space-y-1.5 sm:space-y-2">
                   <span
@@ -64,6 +65,7 @@ export default function Header() {
               <button
                 className="text-white/80 hover:text-white transition-colors hidden sm:block"
                 aria-label="Search"
+                suppressHydrationWarning
               >
                 <svg
                   className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"

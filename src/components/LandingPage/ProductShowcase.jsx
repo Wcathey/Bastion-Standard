@@ -159,7 +159,7 @@ export default function ProductShowcase() {
   const [buttonRef, buttonVisible] = useScrollAnimation();
 
   return (
-    <section className="relative bg-black text-white py-16 sm:py-24 md:py-32 overflow-hidden">
+    <section className="relative bg-black text-white py-12 sm:py-16 md:py-20 overflow-hidden">
       {/* Background glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] sm:w-[900px] sm:h-[900px] md:w-[1200px] md:h-[1200px] bg-amber-600/6 rounded-full blur-[100px] sm:blur-[125px] md:blur-[150px] pointer-events-none"></div>
 
@@ -167,7 +167,7 @@ export default function ProductShowcase() {
         {/* Section Header */}
         <div
           ref={headerRef}
-          className={`text-center mb-16 sm:mb-20 md:mb-24 transition-all duration-1000 ease-out ${
+          className={`text-center mb-12 sm:mb-14 md:mb-16 transition-all duration-1000 ease-out ${
             headerVisible
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-10"
@@ -186,7 +186,7 @@ export default function ProductShowcase() {
         {/* Simple Bar Soap Collection Header */}
         <div
           ref={collectionRef}
-          className={`mb-32 transition-all duration-1000 ease-out ${
+          className={`mb-16 sm:mb-20 md:mb-24 transition-all duration-1000 ease-out ${
             collectionVisible
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-10"
@@ -224,7 +224,7 @@ export default function ProductShowcase() {
         </div>
 
         {/* Products Grid */}
-        <div className="space-y-32">
+        <div className="space-y-20 sm:space-y-24">
           {products.map((product, index) => (
             <ProductItem key={product.name} product={product} index={index} />
           ))}
@@ -233,7 +233,7 @@ export default function ProductShowcase() {
         {/* Explore All Button */}
         <div
           ref={buttonRef}
-          className={`text-center mt-24 transition-all duration-1000 ease-out ${
+          className={`text-center mt-16 sm:mt-20 transition-all duration-1000 ease-out ${
             buttonVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
           }`}
         >

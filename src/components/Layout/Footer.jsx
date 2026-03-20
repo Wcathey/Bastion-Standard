@@ -119,7 +119,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/blogs/news"
+                  href="/journal"
                   className="hover:opacity-70 transition-opacity"
                 >
                   The Bastion Journal
@@ -127,7 +127,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/pages/about-us"
+                  href="/about"
                   className="hover:opacity-70 transition-opacity"
                 >
                   About Us
@@ -135,7 +135,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/pages/connect"
+                  href="/connect"
                   className="hover:opacity-70 transition-opacity uppercase tracking-wider"
                 >
                   Connect With Us
@@ -152,7 +152,15 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <Link
-                  href="/pages/customer-service"
+                  href="/events"
+                  className="hover:opacity-70 transition-opacity uppercase tracking-wider"
+                >
+                  Events
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/customer-service"
                   className="hover:opacity-70 transition-opacity uppercase tracking-wider"
                 >
                   Customer Service
@@ -160,7 +168,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/pages/partnership-opportunities"
+                  href="/partnerships"
                   className="hover:opacity-70 transition-opacity uppercase tracking-wider"
                 >
                   Partnership Opportunities
@@ -168,7 +176,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/pages/wholesale-inquiries"
+                  href="/wholesale"
                   className="hover:opacity-70 transition-opacity uppercase tracking-wider"
                 >
                   Wholesale Inquiries
@@ -176,7 +184,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/pages/brand-ambassadors"
+                  href="/ambassadors"
                   className="hover:opacity-70 transition-opacity uppercase tracking-wider"
                 >
                   Brand Ambassadors
@@ -184,7 +192,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/pages/privacy-choices"
+                  href="/privacy-choices"
                   className="hover:opacity-70 transition-opacity"
                 >
                   Your Privacy Choices

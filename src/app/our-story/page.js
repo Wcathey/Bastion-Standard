@@ -1,5 +1,5 @@
-import ComingSoon from "@/components/ComingSoon/ComingSoon";
+import DiolyStory from "@/components/LandingPage/DiolyStory";
 
 export default function OurStoryPage() {
-  return <ComingSoon />;
+  return <DiolyStory />;
 }

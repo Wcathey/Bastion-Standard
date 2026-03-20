@@ -13,10 +13,6 @@ export default function DiolyStory() {
   const [section5Ref, section5Visible] = useScrollAnimation(0.2);
   const [section6Ref, section6Visible] = useScrollAnimation(0.2);
   const [section7Ref, section7Visible] = useScrollAnimation(0.2);
-  const [philosophyRef, philosophyVisible] = useScrollAnimation(0.2);
-  const [valuesRef, valuesVisible] = useScrollAnimation(0.2);
-  const [section8Ref, section8Visible] = useScrollAnimation(0.2);
-  const [bastionWayRef, bastionWayVisible] = useScrollAnimation(0.2);
 
   return (
     <section className="relative bg-black text-white py-16 sm:py-24 md:py-32 overflow-hidden">
@@ -36,7 +32,7 @@ export default function DiolyStory() {
           }`}
         >
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-[0.15em] sm:tracking-[0.2em] mb-6 sm:mb-8 drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
-            THE STORY
+            DIOLY'S STORY
           </h2>
           <div className="h-px w-24 sm:w-32 bg-white mx-auto shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
         </div>
@@ -322,118 +318,6 @@ export default function DiolyStory() {
             <div className="h-px w-32 bg-white mx-auto my-12 shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
             <p className="text-xl md:text-2xl font-light italic text-gray-400">
               Built on science. Powered by data. Crafted with purpose.
-            </p>
-          </div>
-        </div>
-
-        {/* Philosophy Section - Integrated */}
-        <div
-          ref={philosophyRef}
-          className={`mb-32 transition-all duration-1000 ease-out ${
-            philosophyVisible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-10"
-          }`}
-        >
-          <div className="text-center mb-16">
-            <h3 className="text-5xl md:text-6xl font-light tracking-[0.2em] mb-8 drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
-              OUR PHILOSOPHY
-            </h3>
-            <div className="h-px w-32 bg-white mx-auto mb-12 shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
-            <p className="text-2xl md:text-3xl font-light tracking-wider text-gray-300 max-w-4xl mx-auto leading-relaxed">
-              Skincare is wellness. Self-care is self-validation.
-            </p>
-          </div>
-        </div>
-
-        {/* Values Grid with Image */}
-        <div
-          ref={valuesRef}
-          className={`mb-32 transition-all duration-1000 ease-out ${
-            valuesVisible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-10"
-          }`}
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-            {/* Left - Image */}
-            <div className="relative aspect-square lg:aspect-[4/5] shadow-[0_0_70px_rgba(251,191,36,0.2)]">
-              <Image
-                src="/images/landing/Render_Mockup_4000_3000_2025-05-18_1_-Pacdora_2.png"
-                alt="Bastion Standard Philosophy"
-                fill
-                className="object-contain"
-              />
-            </div>
-
-            {/* Right - Content */}
-            <div className="flex flex-col justify-center space-y-12">
-              <div>
-                <h3 className="text-3xl md:text-4xl font-light tracking-wider mb-6 drop-shadow-[0_0_20px_rgba(251,191,36,0.2)]">
-                  For Men of Color
-                </h3>
-                <p className="text-lg font-light leading-relaxed text-gray-300">
-                  Created with intention, designed with purpose. My formulations
-                  honor the unique needs of melanin-rich skin, addressing
-                  sensitivity with transparency and care.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-3xl md:text-4xl font-light tracking-wider mb-6 drop-shadow-[0_0_20px_rgba(251,191,36,0.2)]">
-                  Natural & Transparent
-                </h3>
-                <p className="text-lg font-light leading-relaxed text-gray-300">
-                  I believe you deserve to know what touches your skin. Every
-                  ingredient is chosen with integrity, every formula crafted
-                  with authenticity.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-3xl md:text-4xl font-light tracking-wider mb-6 drop-shadow-[0_0_20px_rgba(251,191,36,0.2)]">
-                  A Legacy of Confidence
-                </h3>
-                <p className="text-lg font-light leading-relaxed text-gray-300">
-                  This is more than grooming—it's a commitment to excellence,
-                  resilience, and community. Join a movement that celebrates who
-                  you are and honors where you come from.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Quote */}
-        <div
-          ref={section8Ref}
-          className={`mb-32 text-center border-t border-white/20 pt-16 transition-all duration-1000 ease-out ${
-            section8Visible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-10"
-          }`}
-        >
-          <blockquote className="text-3xl md:text-4xl lg:text-5xl font-light tracking-wide italic text-gray-200 max-w-5xl mx-auto leading-relaxed drop-shadow-[0_0_25px_rgba(251,191,36,0.25)]">
-            "When you invest in yourself, you invest in your legacy."
-          </blockquote>
-        </div>
-
-        {/* The Bastion Way - Final Section */}
-        <div
-          ref={bastionWayRef}
-          className={`text-center transition-all duration-1000 ease-out ${
-            bastionWayVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
-          }`}
-        >
-          <div className="max-w-4xl mx-auto">
-            <h3 className="text-5xl md:text-6xl font-light tracking-[0.2em] mb-8 drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
-              THE BASTION WAY
-            </h3>
-            <div className="h-px w-32 bg-white mx-auto mb-12 shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
-            <p className="text-lg md:text-xl font-light leading-relaxed text-gray-300 mb-12">
-              Your routine is more than just skincare. It's a reflection of your
-              journey, your heritage, and your commitment to self-care. This is
-              how we do it at Bastion Standard.
             </p>
           </div>
         </div>

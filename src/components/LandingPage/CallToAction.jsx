@@ -4,11 +4,12 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 export default function CallToAction() {
   const [headerRef, headerVisible] = useScrollAnimation();
-  const [socialsRef, socialsVisible] = useScrollAnimation();
+  const [buttonRef, buttonVisible] = useScrollAnimation(0.2);
+  const [socialsRef, socialsVisible] = useScrollAnimation(0.3);
   const [newsletterRef, newsletterVisible] = useScrollAnimation();
 
   return (
-    <section className="relative bg-zinc-950 text-white py-32 overflow-hidden">
+    <section className="relative bg-zinc-950 text-white py-16 sm:py-20 md:py-24 overflow-hidden">
       {/* Decorative Background with warm glow */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-600/8 rounded-full blur-[120px]"></div>
@@ -31,16 +32,32 @@ export default function CallToAction() {
 
           <div className="h-px w-32 bg-white mx-auto mb-12 shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
 
-          <p className="text-xl md:text-2xl font-light leading-relaxed text-gray-300 mb-16 max-w-3xl mx-auto tracking-wide">
-            Join a community of men who refuse to settle. Who understand that
-            excellence is not a destination—it's a standard.
+          <p className="text-lg md:text-xl font-light leading-relaxed text-gray-300 mb-12 max-w-4xl mx-auto">
+            Your routine is more than just skincare. It's a reflection of your journey, your heritage, and your commitment to self-care. Join a community of men who refuse to settle. Who understand that excellence is not a destination—it's a standard.
           </p>
+        </div>
+
+        {/* Journal Button */}
+        <div
+          ref={buttonRef}
+          className={`mb-12 transition-all duration-1000 ease-out delay-200 ${
+            buttonVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-10"
+          }`}
+        >
+          <a
+            href="/journal"
+            className="inline-block bg-white text-black px-12 py-4 text-sm font-semibold tracking-[0.2em] uppercase hover:bg-gray-200 transition-all duration-300 shadow-[0_0_40px_rgba(251,191,36,0.4)] hover:shadow-[0_0_60px_rgba(251,191,36,0.6)]"
+          >
+            The Bastion Journal
+          </a>
         </div>
 
         {/* Social Icons */}
         <div
           ref={socialsRef}
-          className={`flex gap-6 justify-center items-center mb-20 transition-all duration-1000 ease-out delay-200 ${
+          className={`flex gap-6 justify-center items-center mb-20 transition-all duration-1000 ease-out delay-300 ${
             socialsVisible ? "opacity-100 scale-100" : "opacity-0 scale-90"
           }`}
         >

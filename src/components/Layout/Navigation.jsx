@@ -21,7 +21,7 @@ const navigationItems = [
     href: "/about",
     hasDropdown: true,
     subItems: [
-      { name: "OUR STORY", href: "/our-story" },
+      { name: "DIOLY'S STORY", href: "/our-story" },
       { name: "THE BASTION FORMULAS", href: "/bastion-formulas" },
       { name: "FAQS", href: "/faqs" },
     ],
@@ -31,6 +31,7 @@ const navigationItems = [
     href: "/connect",
     hasDropdown: true,
     subItems: [
+      { name: "EVENTS", href: "/events" },
       { name: "INQUIRY FORM", href: "/inquiry" },
       { name: "CUSTOMER SERVICE", href: "/customer-service" },
       { name: "PARTNERSHIP OPPORTUNITIES", href: "/partnerships" },
@@ -79,7 +80,7 @@ export default function Navigation({ isOpen, onClose }) {
         <div className="h-full flex flex-col">
           {/* Close Button */}
           <div className="flex justify-end px-5 pt-5 pb-3">
-            <button onClick={onClose} className="p-2" aria-label="Close Menu">
+            <button onClick={onClose} className="p-2" aria-label="Close Menu" suppressHydrationWarning>
               <svg
                 className="w-7 h-7 text-white"
                 fill="none"
@@ -110,6 +111,7 @@ export default function Navigation({ isOpen, onClose }) {
                       <button
                         onClick={() => toggleDropdown(item.name)}
                         className="w-full flex items-center justify-between text-white text-left font-light tracking-wider text-base uppercase py-2"
+                        suppressHydrationWarning
                       >
                         <span>{item.name}</span>
                         <svg

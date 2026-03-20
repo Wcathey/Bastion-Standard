@@ -39,7 +39,7 @@ function VisionSection({ section, index }) {
 
   return (
     <div
-      className={`relative min-h-screen flex items-center py-16 sm:py-20 md:py-24 ${
+      className={`relative flex items-center py-12 sm:py-16 md:py-20 ${
         index % 2 === 0 ? "bg-black" : "bg-zinc-950"
       }`}
     >
@@ -130,16 +130,33 @@ function VisionSection({ section, index }) {
 }
 
 export default function FormulaSection() {
+  const [titleRef, titleVisible] = useScrollAnimation();
+
   return (
-    <section className="relative bg-black flex flex-col justify-evenly">
+    <section className="relative bg-black flex flex-col justify-evenly py-16 sm:py-20 md:py-24">
       {/* Central warm glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-amber-600/5 rounded-full blur-[150px] pointer-events-none"></div>
 
-      {/* Vision Sections */}
-      <div>
-        {visionSections.map((section, index) => (
-          <VisionSection key={section.title} section={section} index={index} />
-        ))}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        {/* Title */}
+        <div
+          ref={titleRef}
+          className={`text-center mb-16 sm:mb-20 md:mb-24 transition-all duration-1000 ease-out ${
+            titleVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          }`}
+        >
+          <h2 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-[0.15em] sm:tracking-[0.2em] mb-6 sm:mb-8 drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
+            THE BASTION FORMULA
+          </h2>
+          <div className="h-px w-24 sm:w-32 bg-white mx-auto shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
+        </div>
+
+        {/* Vision Sections */}
+        <div>
+          {visionSections.map((section, index) => (
+            <VisionSection key={section.title} section={section} index={index} />
+          ))}
+        </div>
       </div>
     </section>
   );
