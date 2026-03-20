@@ -197,7 +197,7 @@ export default function ProductShowcase() {
             <div className="flex-1 relative">
               <div className="relative aspect-square shadow-[0_0_80px_rgba(251,191,36,0.25)] hover:shadow-[0_0_100px_rgba(251,191,36,0.35)] transition-shadow duration-500">
                 <Image
-                  src="/images/landing/Render_Mockup_4000_3000_2025-05-18_1_09edef10-3db6-486e-b147-2156b6b52d37.png"
+                  src="/images/landing/Simple_Bar_Soap_Set_Main.png"
                   alt="Simple Bar Soap Collection"
                   fill
                   className="object-contain"

@@ -51,7 +51,7 @@ const allProducts = [
     type: "Hair Shampoo",
     line: "Simple Line",
     image:
-      "/images/landing/Render_Mockup_4000_3000_2025-05-19_1_-Pacdora_08b1cb8e-21f7-4e97-b0a0-c1f8e8833043.png",
+      "/images/landing/Simple_Soap_Bar_Shampoo_Conditioner_Full_Set.png",
     price1: 0,
     price2: 0,
     price4: 0,
@@ -65,7 +65,7 @@ const allProducts = [
     type: "Hair Conditioner",
     line: "Simple Line",
     image:
-      "/images/landing/Render_Mockup_4000_3000_2025-05-19_1_-Pacdora_08b1cb8e-21f7-4e97-b0a0-c1f8e8833043.png",
+      "/images/landing/Simple_Soap_Bar_Shampoo_Conditioner_Full_Set.png",
     price1: 0,
     price2: 0,
     price4: 0,
