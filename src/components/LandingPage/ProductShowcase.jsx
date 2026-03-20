@@ -66,17 +66,17 @@ function ProductItem({ product, index }) {
       ref={ref}
       className={`flex flex-col ${
         isEven ? "lg:flex-row" : "lg:flex-row-reverse"
-      } items-center gap-12 lg:gap-20`}
+      } items-center gap-8 sm:gap-10 md:gap-12 lg:gap-20`}
     >
       {/* Product Image */}
       <div
-        className={`flex-1 relative transition-all duration-1000 ease-out ${
+        className={`flex-1 w-full relative transition-all duration-1000 ease-out ${
           isVisible
             ? "opacity-100 translate-x-0"
             : `opacity-0 ${isEven ? "-translate-x-20" : "translate-x-20"}`
         }`}
       >
-        <div className="relative aspect-square shadow-[0_0_60px_rgba(251,191,36,0.2)] hover:shadow-[0_0_80px_rgba(251,191,36,0.3)] transition-shadow duration-500">
+        <div className="relative aspect-square shadow-[0_0_30px_rgba(251,191,36,0.1)] sm:shadow-[0_0_40px_rgba(251,191,36,0.15)] md:shadow-[0_0_60px_rgba(251,191,36,0.2)] hover:shadow-[0_0_80px_rgba(251,191,36,0.3)] transition-shadow duration-500">
           <Image
             src={product.image}
             alt={product.name}
@@ -88,21 +88,21 @@ function ProductItem({ product, index }) {
 
       {/* Product Info */}
       <div
-        className={`flex-1 text-center lg:text-left transition-all duration-1000 ease-out delay-200 ${
+        className={`flex-1 w-full text-center lg:text-left transition-all duration-1000 ease-out delay-200 ${
           isVisible
             ? "opacity-100 translate-x-0"
             : `opacity-0 ${isEven ? "translate-x-20" : "-translate-x-20"}`
         }`}
       >
-        <p className="text-sm tracking-[0.3em] text-gray-400 mb-4 uppercase">
+        <p className="text-xs sm:text-sm tracking-[0.25em] sm:tracking-[0.3em] text-gray-400 mb-3 sm:mb-4 uppercase">
           {product.tagline}
         </p>
-        <h3 className="text-4xl md:text-5xl font-light tracking-wider mb-6 drop-shadow-[0_0_20px_rgba(251,191,36,0.25)]">
+        <h3 className="text-3xl sm:text-4xl md:text-5xl font-light tracking-wide sm:tracking-wider mb-5 sm:mb-6 drop-shadow-[0_0_20px_rgba(251,191,36,0.25)]">
           {product.name}
         </h3>
-        <div className="h-px w-16 bg-white mb-8 mx-auto lg:mx-0 shadow-[0_0_15px_rgba(251,191,36,0.5)]"></div>
+        <div className="h-px w-14 sm:w-16 bg-white mb-6 sm:mb-8 mx-auto lg:mx-0 shadow-[0_0_15px_rgba(251,191,36,0.5)]"></div>
 
-        <p className="text-base md:text-lg font-light leading-relaxed text-gray-300 mb-6 max-w-lg mx-auto lg:mx-0">
+        <p className="text-sm sm:text-base md:text-lg font-light leading-relaxed text-gray-300 mb-5 sm:mb-6 max-w-lg mx-auto lg:mx-0">
           {product.description}
         </p>
 
@@ -144,7 +144,7 @@ function ProductItem({ product, index }) {
 
         <Link
           href={`/products?filter=${product.filterParam}`}
-          className="inline-block border border-white px-10 py-4 text-sm font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_25px_rgba(251,191,36,0.2)] hover:shadow-[0_0_40px_rgba(251,191,36,0.4)]"
+          className="inline-block border border-white px-8 py-3 sm:px-10 sm:py-4 text-xs sm:text-sm font-semibold tracking-[0.15em] sm:tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_25px_rgba(251,191,36,0.2)] hover:shadow-[0_0_40px_rgba(251,191,36,0.4)]"
         >
           Explore
         </Link>
@@ -159,24 +159,24 @@ export default function ProductShowcase() {
   const [buttonRef, buttonVisible] = useScrollAnimation();
 
   return (
-    <section className="relative bg-black text-white py-32 overflow-hidden">
+    <section className="relative bg-black text-white py-16 sm:py-24 md:py-32 overflow-hidden">
       {/* Background glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[1200px] h-[1200px] bg-amber-600/6 rounded-full blur-[150px] pointer-events-none"></div>
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] sm:w-[900px] sm:h-[900px] md:w-[1200px] md:h-[1200px] bg-amber-600/6 rounded-full blur-[100px] sm:blur-[125px] md:blur-[150px] pointer-events-none"></div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div
           ref={headerRef}
-          className={`text-center mb-24 transition-all duration-1000 ease-out ${
+          className={`text-center mb-16 sm:mb-20 md:mb-24 transition-all duration-1000 ease-out ${
             headerVisible
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-10"
           }`}
         >
-          <h2 className="text-6xl md:text-7xl font-light tracking-[0.2em] mb-8 drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-[0.15em] sm:tracking-[0.2em] mb-6 sm:mb-8 drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
             THE COLLECTION
           </h2>
-          <div className="h-px w-32 bg-white mx-auto mb-8 shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
+          <div className="h-px w-24 sm:w-32 bg-white mx-auto mb-6 sm:mb-8 shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
           <p className="text-xl md:text-2xl font-light tracking-wider text-gray-300 max-w-3xl mx-auto">
             Designed for the modern man who values authenticity, quality, and
             legacy

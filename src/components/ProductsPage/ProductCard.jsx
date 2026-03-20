@@ -36,7 +36,7 @@ export default function ProductCard({ product }) {
 
       {/* Product Info */}
       <div className="text-center">
-        <h3 className="text-white text-sm font-light tracking-wider uppercase mb-2">
+        <h3 className="text-white text-xs sm:text-sm font-light tracking-wider uppercase mb-2">
           {product.name}
         </h3>
 
@@ -47,7 +47,7 @@ export default function ProductCard({ product }) {
               <select
                 value={selectedQuantity}
                 onChange={(e) => setSelectedQuantity(Number(e.target.value))}
-                className="bg-black text-white border border-white/20 px-4 py-2 text-sm font-light focus:outline-none focus:border-white/40"
+                className="bg-black text-white border border-white/20 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-light focus:outline-none focus:border-white/40"
               >
                 <option value={1}>1 Pack</option>
                 <option value={2}>2 Pack</option>
@@ -56,19 +56,22 @@ export default function ProductCard({ product }) {
             </div>
 
             {/* Price */}
-            <p className="text-white/80 text-sm font-light">
+            <p className="text-white/80 text-xs sm:text-sm font-light">
               ${getPriceForQuantity(selectedQuantity).toFixed(2)}
             </p>
 
             {/* Add to Cart Button */}
-            <button className="mt-4 w-full border border-white text-white px-6 py-2 text-xs font-semibold tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-300">
+            <button
+              type="button"
+              className="mt-3 sm:mt-4 w-full border border-white text-white px-4 py-2 sm:px-6 text-[10px] sm:text-xs font-semibold tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-300"
+            >
               Add to Cart
             </button>
           </>
         )}
 
         {product.comingSoon && (
-          <p className="text-white/60 text-sm font-light italic">
+          <p className="text-white/60 text-xs sm:text-sm font-light italic">
             Available Soon
           </p>
         )}

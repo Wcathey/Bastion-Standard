@@ -162,9 +162,11 @@ export default function ProductsPage() {
   }, [availableProducts, sortOption]);
 
   return (
-    <div className="bg-black min-h-screen flex">
-      {/* Left Sidebar - Filters */}
-      <ProductFilters onFilterChange={setFilters} />
+    <div className="bg-black min-h-screen flex flex-col md:flex-row">
+      {/* Left Sidebar - Filters (hidden on mobile, shown on md+) */}
+      <div className="hidden md:block">
+        <ProductFilters onFilterChange={setFilters} />
+      </div>
 
       {/* Right Content - Product Grid */}
       <ProductGrid
@@ -172,6 +174,8 @@ export default function ProductsPage() {
         comingSoonProducts={comingSoonProducts}
         sortOption={sortOption}
         onSortChange={setSortOption}
+        filters={filters}
+        onFilterChange={setFilters}
       />
     </div>
   );
