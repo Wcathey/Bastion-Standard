@@ -316,8 +316,11 @@ export default function DiolyStory() {
               </p>
             </div>
             <div className="h-px w-32 bg-white mx-auto my-12 shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
-            <p className="text-xl md:text-2xl font-light italic text-gray-400">
+            <p className="text-xl md:text-2xl font-light italic text-gray-400 mb-20 sm:mb-24 md:mb-32">
               Built on science. Powered by data. Crafted with purpose.
+            </p>
+            <p className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-[0.15em] sm:tracking-[0.2em] text-white drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
+              THE BASTION STANDARD
             </p>
           </div>
         </div>
