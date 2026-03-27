@@ -33,7 +33,11 @@ const navigationItems = [
     href: "/about",
     hasDropdown: true,
     subItems: [
-      { name: "DIOLY'S STORY", href: "/our-story" },
+      {
+        name: "BEYOND THE SURFACE",
+        subtitle: "A NEW SKIN ERA",
+        href: "/our-story"
+      },
       { name: "THE BASTION FORMULAS", href: "/bastion-formulas" },
       { name: "FAQS", href: "/faqs" },
     ],
@@ -274,7 +278,12 @@ export default function Navigation({ isOpen, onClose }) {
                               onClick={onClose}
                               className="text-white hover:text-gray-300 font-light tracking-wide text-sm uppercase py-1 transition-colors"
                             >
-                              {subItem.name}
+                              <div>
+                                <div>{subItem.name}</div>
+                                {subItem.subtitle && (
+                                  <div className="text-xs mt-0.5">{subItem.subtitle}</div>
+                                )}
+                              </div>
                             </Link>
                           ),
                         )}
