@@ -14,16 +14,17 @@ export async function POST(request) {
     const {
       priceId,
       quantity = 1,
+      lineItems, // New: support for multiple items from cart
       mode = "payment", // 'payment' for one-time, 'subscription' for recurring
       successUrl,
       cancelUrl,
       metadata = {},
     } = await request.json();
 
-    // Validate required fields
-    if (!priceId) {
+    // Validate required fields - either priceId or lineItems
+    if (!priceId && (!lineItems || lineItems.length === 0)) {
       return NextResponse.json(
-        { error: "Price ID is required" },
+        { error: "Price ID or line items are required" },
         { status: 400 },
       );
     }
@@ -77,15 +78,29 @@ export async function POST(request) {
     // Build base URL for redirect URLs
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
+    // Build line items - support both single item and cart
+    const items = lineItems || [
+      {
+        price: priceId,
+        quantity,
+      },
+    ];
+
+    // Determine mode based on items if not explicitly set
+    let checkoutMode = mode;
+    if (!checkoutMode || checkoutMode === "payment") {
+      // Check if any item is a subscription
+      const hasSubscription = items.some(item => {
+        // Will be determined by Stripe price type
+        return false; // Default to payment mode
+      });
+      checkoutMode = hasSubscription ? "subscription" : "payment";
+    }
+
     // Create checkout session
     const sessionParams = {
-      mode,
-      line_items: [
-        {
-          price: priceId,
-          quantity,
-        },
-      ],
+      mode: checkoutMode,
+      line_items: items,
       success_url:
         successUrl ||
         `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,

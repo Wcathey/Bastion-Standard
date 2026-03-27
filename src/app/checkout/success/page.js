@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { useCart } from "@/contexts/CartContext";
 import CheckoutLoading from "@/components/Checkout/CheckoutLoading";
 import CheckoutPageContainer from "@/components/Checkout/CheckoutPageContainer";
 import NextSteps from "@/components/Checkout/NextSteps";
@@ -13,6 +14,7 @@ import SuccessMessage from "@/components/Checkout/SuccessMessage";
 function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { clearCart } = useCart();
   const [loading, setLoading] = useState(true);
 
   const sessionId = searchParams.get("session_id");
@@ -23,9 +25,12 @@ function CheckoutSuccessContent() {
       return;
     }
 
+    // Clear the cart after successful checkout
+    clearCart();
+
     // Optional: Fetch session details from your API
     setLoading(false);
-  }, [sessionId, router]);
+  }, [sessionId, router, clearCart]);
 
   if (loading) {
     return <CheckoutLoading message="Processing your order..." />;

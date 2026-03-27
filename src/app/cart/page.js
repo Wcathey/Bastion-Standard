@@ -1,5 +1,5 @@
-import ComingSoon from "@/components/ComingSoon/ComingSoon";
+import ShoppingCart from "@/components/Cart/ShoppingCart";
 
 export default function CartPage() {
-  return <ComingSoon />;
+  return <ShoppingCart />;
 }

@@ -1,24 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function ProductFilters({ onFilterChange }) {
+export default function ProductFilters({ onFilterChange, availableTypes, availableLines }) {
   const [availability, setAvailability] = useState({
     inStock: false,
     outOfStock: false,
   });
 
-  const [productTypes, setProductTypes] = useState({
-    "Simple: Crisp": false,
-    "Simple: Pure": false,
-    "Simple: Purify": false,
-    "Hair Shampoo": false,
-    "Hair Conditioner": false,
-  });
+  const [productTypes, setProductTypes] = useState({});
+  const [productLines, setProductLines] = useState({});
 
-  const [productLines, setProductLines] = useState({
-    "Simple Line": false,
-  });
+  // Update filters when available types/lines change
+  useEffect(() => {
+    if (availableTypes && Object.keys(availableTypes).length > 0) {
+      setProductTypes(availableTypes);
+    }
+  }, [availableTypes]);
+
+  useEffect(() => {
+    if (availableLines && Object.keys(availableLines).length > 0) {
+      setProductLines(availableLines);
+    }
+  }, [availableLines]);
 
   const [openSections, setOpenSections] = useState({
     availability: true,

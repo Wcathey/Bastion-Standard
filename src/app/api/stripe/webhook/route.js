@@ -134,16 +134,137 @@ export async function POST(request) {
 async function handleCheckoutSessionCompleted(session, supabase) {
   console.log("Checkout session completed:", session.id);
 
-  // Update customer_id if user is authenticated
-  if (session.metadata?.user_id && session.customer) {
-    await supabase
-      .from("customer_accounts")
-      .update({ customer_id: session.customer })
-      .eq("user_id", session.metadata.user_id);
-  }
+  try {
+    // Update customer_id if user is authenticated
+    if (session.metadata?.user_id && session.customer) {
+      await supabase
+        .from("customer_accounts")
+        .update({ customer_id: session.customer })
+        .eq("user_id", session.metadata.user_id);
+    }
 
-  // TODO: Create order record when user purchases
-  // TODO: Update inventory quantities
+    // Retrieve full session details with line items
+    const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
+      expand: ['line_items', 'line_items.data.price.product', 'customer', 'payment_intent'],
+    });
+
+    // Get or create customer account
+    let accountId = null;
+    if (session.metadata?.user_id && session.metadata.user_id !== 'guest') {
+      const { data: account } = await supabase
+        .from("customer_accounts")
+        .select("id")
+        .eq("user_id", session.metadata.user_id)
+        .single();
+
+      accountId = account?.id;
+    } else {
+      // For guest checkout, create a customer account
+      const { data: guestAccount, error: guestError } = await supabase
+        .from("customer_accounts")
+        .insert({
+          user_id: null,
+          customer_id: session.customer,
+          profile_completed: false,
+        })
+        .select("id")
+        .single();
+
+      if (!guestError) {
+        accountId = guestAccount.id;
+      }
+    }
+
+    // Get invoice if exists
+    let invoiceId = null;
+    if (fullSession.invoice) {
+      const { data: invoiceData } = await supabase
+        .from("invoices")
+        .select("id")
+        .eq("stripe_invoice_id", fullSession.invoice)
+        .single();
+
+      invoiceId = invoiceData?.id;
+    }
+
+    // Extract shipping address
+    const shippingDetails = fullSession.shipping_details || {};
+    const shippingAddress = shippingDetails.address || {};
+
+    // Generate order number
+    const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+
+    // Create order record
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .insert({
+        account_id: accountId,
+        invoice_id: invoiceId,
+        order_number: orderNumber,
+        total_amount: session.amount_total,
+        currency: session.currency,
+        status: 'processing',
+        shipping_address_line1: shippingAddress.line1,
+        shipping_address_line2: shippingAddress.line2,
+        shipping_city: shippingAddress.city,
+        shipping_state: shippingAddress.state,
+        shipping_postal_code: shippingAddress.postal_code,
+        shipping_country: shippingAddress.country,
+        metadata: {
+          stripe_session_id: session.id,
+          stripe_payment_intent: fullSession.payment_intent?.id || fullSession.payment_intent,
+          customer_name: shippingDetails.name,
+          customer_email: fullSession.customer_details?.email,
+        },
+      })
+      .select()
+      .single();
+
+    if (orderError) {
+      console.error("Error creating order:", orderError);
+      return;
+    }
+
+    console.log("Order created successfully:", order.order_number);
+
+    // Update inventory quantities
+    if (fullSession.line_items?.data) {
+      for (const lineItem of fullSession.line_items.data) {
+        const priceId = lineItem.price.id;
+        const quantity = lineItem.quantity;
+
+        // Find inventory item by stripe_price_id
+        const { data: inventoryItem } = await supabase
+          .from("inventory")
+          .select("id, stock_quantity, reserved_quantity")
+          .eq("stripe_price_id", priceId)
+          .single();
+
+        if (inventoryItem) {
+          // Decrease stock quantity
+          await supabase
+            .from("inventory")
+            .update({
+              stock_quantity: Math.max(0, inventoryItem.stock_quantity - quantity),
+              total_sales: supabase.rpc('increment', {
+                table: 'inventory',
+                column: 'total_sales',
+                amount: quantity
+              }),
+              total_revenue: supabase.rpc('increment', {
+                table: 'inventory',
+                column: 'total_revenue',
+                amount: lineItem.amount_total
+              }),
+              last_sold_at: new Date().toISOString(),
+            })
+            .eq("id", inventoryItem.id);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error in handleCheckoutSessionCompleted:", error);
+  }
 }
 
 async function handlePaymentIntentSucceeded(paymentIntent, _supabase) {

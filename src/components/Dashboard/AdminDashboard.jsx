@@ -26,18 +26,18 @@ export default function AdminDashboard({ user, adminAccount }) {
   const [lowStockItems, setLowStockItems] = useState([]);
   const [recentOrders, setRecentOrders] = useState([]);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
-
   const fetchDashboardData = async () => {
     setDataLoading(true);
     try {
+      // Fetch products from Stripe API (like products page does)
+      const stripeProductsResponse = await fetch("/api/products");
+      const stripeProductsData = await stripeProductsResponse.json();
+      const stripeProducts = stripeProductsData.success ? stripeProductsData.products : [];
+
       // Fetch all data in parallel
       const [
         customersData,
         ordersData,
-        productsData,
         inventoryData,
         ticketsData,
         feedbackData,
@@ -54,11 +54,6 @@ export default function AdminDashboard({ user, adminAccount }) {
         supabase
           .from("orders")
           .select("total_amount, status, created_at"),
-
-        // Total products
-        supabase
-          .from("stripe_products")
-          .select("id, active", { count: "exact" }),
 
         // Inventory
         supabase
@@ -160,8 +155,8 @@ export default function AdminDashboard({ user, adminAccount }) {
           ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100
           : 0;
 
-      const products = productsData.data || [];
-      const totalProducts = products.filter((p) => p.active).length;
+      // Use Stripe products data
+      const totalProducts = stripeProducts.filter((p) => p.active).length;
 
       const inventory = inventoryData.data || [];
       const inStockProducts = inventory.filter(
@@ -188,6 +183,11 @@ export default function AdminDashboard({ user, adminAccount }) {
       setDataLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSignOut = async () => {
     setLoading(true);

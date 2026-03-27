@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useCart } from "@/contexts/CartContext";
 import AdvertisingBanner from "./AdvertisingBanner";
 import Navigation from "./Navigation";
 
@@ -11,6 +12,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [profileLink, setProfileLink] = useState("/login");
   const supabase = createClient();
+  const { getCartCount } = useCart();
 
   // Determine profile link based on authenticated user type
   useEffect(() => {
@@ -191,9 +193,11 @@ export default function Header() {
                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                <span className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 bg-white text-black text-[10px] sm:text-xs font-bold rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center">
-                  0
-                </span>
+                {getCartCount() > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 bg-white text-black text-[10px] sm:text-xs font-bold rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center">
+                    {getCartCount()}
+                  </span>
+                )}
               </Link>
             </div>
           </div>
