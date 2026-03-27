@@ -1,5 +1,14 @@
-import ComingSoon from "@/components/ComingSoon/ComingSoon";
+import FAQContent from "@/components/Faq/FAQContent";
+import FAQNeedHelp from "@/components/Faq/FAQNeedHelp";
+import FAQPageContainer from "@/components/Faq/FAQPageContainer";
+import FAQPageTitle from "@/components/Faq/FAQPageTitle";
 
 export default function FAQsPage() {
-  return <ComingSoon />;
+  return (
+    <FAQPageContainer>
+      <FAQPageTitle />
+      <FAQContent />
+      <FAQNeedHelp />
+    </FAQPageContainer>
+  );
 }

@@ -2,12 +2,77 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import AdvertisingBanner from "./AdvertisingBanner";
 import Navigation from "./Navigation";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [profileLink, setProfileLink] = useState("/login");
+  const supabase = createClient();
+
+  // Determine profile link based on authenticated user type
+  useEffect(() => {
+    const checkUserType = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        setProfileLink("/login");
+        return;
+      }
+
+      // Check if user is an admin
+      const { data: adminAccount } = await supabase
+        .from("admin_accounts")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (adminAccount) {
+        setProfileLink("/dashboard/admin");
+        return;
+      }
+
+      // Check if user is a customer
+      const { data: customerAccount } = await supabase
+        .from("customer_accounts")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (customerAccount) {
+        setProfileLink("/dashboard/customer");
+        return;
+      }
+
+      // Fallback to login if no account found
+      setProfileLink("/login");
+    };
+
+    // Check user type on mount
+    checkUserType();
+
+    // Listen for auth state changes (login, logout, etc.)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, _session) => {
+      if (event === "SIGNED_OUT") {
+        // User logged out - reset to customer login
+        setProfileLink("/login");
+      } else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        // User logged in or session refreshed - recheck user type
+        checkUserType();
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   return (
     <>
@@ -25,7 +90,9 @@ export default function Header() {
                 <div className="w-7 h-7 sm:w-9 sm:h-9 flex flex-col justify-center items-center space-y-1.5 sm:space-y-2">
                   <span
                     className={`block h-0.5 w-6 sm:w-8 bg-white transition-all duration-300 ${
-                      isMenuOpen ? "rotate-45 translate-y-2 sm:translate-y-2.5" : ""
+                      isMenuOpen
+                        ? "rotate-45 translate-y-2 sm:translate-y-2.5"
+                        : ""
                     }`}
                   />
                   <span
@@ -35,7 +102,9 @@ export default function Header() {
                   />
                   <span
                     className={`block h-0.5 w-6 sm:w-8 bg-white transition-all duration-300 ${
-                      isMenuOpen ? "-rotate-45 -translate-y-2 sm:-translate-y-2.5" : ""
+                      isMenuOpen
+                        ? "-rotate-45 -translate-y-2 sm:-translate-y-2.5"
+                        : ""
                     }`}
                   />
                 </div>
@@ -84,7 +153,7 @@ export default function Header() {
 
               {/* Profile Icon */}
               <Link
-                href="/account"
+                href={profileLink}
                 className="text-white/80 hover:text-white transition-colors"
                 aria-label="Profile"
               >

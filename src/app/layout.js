@@ -1,5 +1,6 @@
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
+import FloatingFeedbackButton from "@/components/Feedback/FloatingFeedbackButton";
 import Footer from "@/components/Layout/Footer";
 import Header from "@/components/Layout/Header";
 
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
         <Header />
         <main className="min-h-screen">{children}</main>
         <Footer />
+        <FloatingFeedbackButton />
       </body>
     </html>
   );

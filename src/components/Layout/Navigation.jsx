@@ -1,7 +1,19 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import FeedbackModal from "../Feedback/FeedbackModal";
+
+// Helper function to get time-based greeting
+function _getTimeBasedGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+}
 
 const navigationItems = [
   {
@@ -33,6 +45,7 @@ const navigationItems = [
     subItems: [
       { name: "EVENTS", href: "/events" },
       { name: "INQUIRY FORM", href: "/inquiry" },
+      { name: "SUBMIT FEEDBACK", href: "#feedback", special: "feedback" },
       { name: "CUSTOMER SERVICE", href: "/customer-service" },
       { name: "PARTNERSHIP OPPORTUNITIES", href: "/partnerships" },
       { name: "WHOLESALE INQUIRIES", href: "/wholesale" },
@@ -42,7 +55,69 @@ const navigationItems = [
 ];
 
 export default function Navigation({ isOpen, onClose }) {
+  const router = useRouter();
+  const supabase = createClient();
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [_account, setAccount] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Check for authenticated user
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+
+      if (user) {
+        // Check if user is an admin first
+        const { data: adminData } = await supabase
+          .from("admin_accounts")
+          .select("first_name")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (adminData) {
+          setAccount(adminData);
+        } else {
+          // Not an admin, check customer accounts table
+          const { data: accountData } = await supabase
+            .from("customer_accounts")
+            .select("first_name")
+            .eq("user_id", user.id)
+            .maybeSingle();
+          setAccount(accountData);
+        }
+      } else {
+        // No user, clear account data
+        setAccount(null);
+      }
+    };
+
+    // Check user on mount
+    checkUser();
+
+    // Listen for auth state changes (login, logout, etc.)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, _session) => {
+      if (event === "SIGNED_OUT") {
+        // User logged out - clear user and account state
+        setUser(null);
+        setAccount(null);
+      } else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        // User logged in or session refreshed - recheck user
+        checkUser();
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   // Prevent body scroll when menu is open
   useEffect(() => {
@@ -58,6 +133,24 @@ export default function Navigation({ isOpen, onClose }) {
 
   const toggleDropdown = (itemName) => {
     setOpenDropdown(openDropdown === itemName ? null : itemName);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      setLoading(true);
+      const { error: signOutError } = await supabase.auth.signOut();
+      if (signOutError) throw signOutError;
+      setUser(null);
+      setAccount(null);
+      onClose();
+      router.push("/");
+      router.refresh();
+    } catch (err) {
+      console.error("Sign out error:", err);
+      alert("Failed to sign out. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -78,27 +171,46 @@ export default function Navigation({ isOpen, onClose }) {
         }`}
       >
         <div className="h-full flex flex-col">
-          {/* Close Button */}
-          <div className="flex justify-end px-5 pt-5 pb-3">
-            <button onClick={onClose} className="p-2" aria-label="Close Menu" suppressHydrationWarning>
-              <svg
-                className="w-7 h-7 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          {/* Header with Logo and Close Button */}
+          <div className="border-b border-white/10">
+            {/* Logo and Close Button Row */}
+            <div className="flex justify-between items-start px-5 pt-5 pb-5">
+              <Link href="/" onClick={onClose}>
+                <div className="w-[100px] h-[100px] rounded-full bg-white flex items-center justify-center p-2">
+                  <Image
+                    src="/images/landing/Black_Transparent_3016bb85-18ea-427e-99d3-f79d1601503a.png"
+                    alt="Bastion Standard Company"
+                    width={100}
+                    height={100}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </Link>
+              <button
+                onClick={onClose}
+                className="p-2"
+                aria-label="Close Menu"
+                suppressHydrationWarning
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="w-7 h-7 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 px-5 py-8 overflow-y-auto">
+          <nav className="flex-1 px-5 py-6 overflow-y-auto">
             <div className="flex flex-col">
               {navigationItems.map((item, _index) => (
                 <div key={item.name}>
@@ -110,7 +222,7 @@ export default function Navigation({ isOpen, onClose }) {
                     {item.hasDropdown ? (
                       <button
                         onClick={() => toggleDropdown(item.name)}
-                        className="w-full flex items-center justify-between text-white text-left font-light tracking-wider text-base uppercase py-2"
+                        className="w-full flex items-center justify-between text-white hover:text-gray-300 text-left font-light tracking-wider text-base uppercase py-2 transition-colors"
                         suppressHydrationWarning
                       >
                         <span>{item.name}</span>
@@ -134,7 +246,7 @@ export default function Navigation({ isOpen, onClose }) {
                       <Link
                         href={item.href}
                         onClick={onClose}
-                        className="block text-white font-light tracking-wider text-base uppercase py-2"
+                        className="block text-white hover:text-gray-300 font-light tracking-wider text-base uppercase py-2 transition-colors"
                       >
                         {item.name}
                       </Link>
@@ -143,16 +255,29 @@ export default function Navigation({ isOpen, onClose }) {
                     {/* Dropdown Items */}
                     {item.subItems && openDropdown === item.name && (
                       <div className="mt-4 ml-0 flex flex-col space-y-3">
-                        {item.subItems.map((subItem) => (
-                          <Link
-                            key={subItem.name}
-                            href={subItem.href}
-                            onClick={onClose}
-                            className="text-white font-light tracking-wide text-sm uppercase py-1"
-                          >
-                            {subItem.name}
-                          </Link>
-                        ))}
+                        {item.subItems.map((subItem) =>
+                          subItem.special === "feedback" ? (
+                            <button
+                              key={subItem.name}
+                              onClick={() => {
+                                setIsFeedbackModalOpen(true);
+                                onClose();
+                              }}
+                              className="text-white hover:text-gray-300 font-light tracking-wide text-sm uppercase py-1 text-left transition-colors"
+                            >
+                              {subItem.name}
+                            </button>
+                          ) : (
+                            <Link
+                              key={subItem.name}
+                              href={subItem.href}
+                              onClick={onClose}
+                              className="text-white hover:text-gray-300 font-light tracking-wide text-sm uppercase py-1 transition-colors"
+                            >
+                              {subItem.name}
+                            </Link>
+                          ),
+                        )}
                       </div>
                     )}
                   </div>
@@ -163,29 +288,48 @@ export default function Navigation({ isOpen, onClose }) {
               <div className="border-t border-white" />
             </div>
 
-            {/* Login Link */}
-            <div className="mt-10 mb-8">
-              <Link
-                href="/login"
-                onClick={onClose}
-                className="block text-white font-light text-base tracking-wide"
-              >
-                Log in
-              </Link>
+            {/* User Email */}
+            {user && (
+              <div className="mt-10 mb-4">
+                <span className="text-gray-300 text-sm font-light tracking-wide">
+                  {user.email}
+                </span>
+              </div>
+            )}
+
+            {/* Login/Logout Link */}
+            <div className="mb-8">
+              {user ? (
+                <button
+                  onClick={handleSignOut}
+                  disabled={loading}
+                  className="block text-red-500 hover:text-red-400 font-light text-base tracking-wide disabled:opacity-50 transition-colors"
+                >
+                  {loading ? "Signing out..." : "Log out"}
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={onClose}
+                  className="block text-white hover:text-gray-300 font-light text-base tracking-wide transition-colors"
+                >
+                  Log in
+                </Link>
+              )}
             </div>
 
             {/* Social Links */}
-            <div className="grid grid-cols-2 gap-0 max-w-[232px]">
+            <div className="flex gap-4">
               {/* Instagram */}
               <a
                 href="https://www.instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center border border-white h-12"
+                className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 hover:opacity-90 transition-opacity shadow-lg"
                 aria-label="Instagram"
               >
                 <svg
-                  className="w-6 h-6 text-white"
+                  className="w-7 h-7 text-white"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -198,11 +342,11 @@ export default function Navigation({ isOpen, onClose }) {
                 href="https://www.linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center border border-white border-l-0 h-12"
+                className="flex items-center justify-center w-12 h-12 rounded-xl bg-blue-600 hover:bg-blue-700 transition-colors shadow-lg"
                 aria-label="LinkedIn"
               >
                 <svg
-                  className="w-6 h-6 text-white"
+                  className="w-7 h-7 text-white"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -213,6 +357,12 @@ export default function Navigation({ isOpen, onClose }) {
           </nav>
         </div>
       </div>
+
+      {/* Feedback Modal */}
+      <FeedbackModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+      />
     </>
   );
 }

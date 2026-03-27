@@ -1,24 +1,20 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 
 /**
  * Dashboard layout - ensures user is authenticated
  * This wraps all dashboard routes (customer and admin)
  */
 export default async function DashboardLayout({ children }) {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/login')
+    redirect("/login");
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {children}
-    </div>
-  )
+  return <div className="min-h-screen bg-gray-50">{children}</div>;
 }

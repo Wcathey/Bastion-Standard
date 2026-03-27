@@ -11,18 +11,29 @@ The customer dashboard provides a comprehensive, tab-based interface for custome
 ```
 src/
 ├── app/
-│   └── dashboard/
-│       ├── customer/
-│       │   └── page.js                 # Server component - fetches user data
-│       └── layout.js                   # Dashboard layout wrapper
+│   ├── dashboard/
+│   │   ├── customer/
+│   │   │   └── page.js                 # Server component - fetches user data
+│   │   └── layout.js                   # Dashboard layout wrapper
+│   ├── support/
+│   │   └── page.js                     # Support center page
+│   └── faq/
+│       └── page.js                     # FAQ page
 └── components/
-    └── Dashboard/
-        ├── CustomerDashboard.jsx       # Main dashboard with tab navigation
-        └── Customer/
-            ├── ManageAccountTab.jsx    # Account management features
-            ├── BillingTab.jsx          # Billing & payment management
-            ├── TrackOrdersTab.jsx      # Order tracking & history
-            └── SupportTab.jsx          # FAQ & support resources
+    ├── Dashboard/
+    │   ├── CustomerDashboard.jsx       # Main dashboard with tab navigation
+    │   └── Customer/
+    │       ├── ManageAccountTab.jsx    # Account management features
+    │       ├── BillingTab.jsx          # Billing & payment management
+    │       └── TrackOrdersTab.jsx      # Order tracking & history
+    ├── Support/
+    │   ├── AIAssistant.jsx             # AI support assistant section
+    │   ├── ContactSupport.jsx          # Contact form
+    │   └── ContactInformation.jsx      # Contact cards (email, phone, chat)
+    └── Faq/
+        ├── FAQData.js                  # FAQ data
+        ├── FAQCategories.jsx           # Category tabs
+        └── FAQQuestions.jsx            # Questions/answers accordion
 ```
 
 ## Features Implemented
@@ -35,7 +46,7 @@ src/
 - ✅ Time-based greeting (Good morning/afternoon/evening)
 - ✅ Display customer's first name (from Supabase accounts table)
 - ✅ Email verification check using `user.email_confirmed_at` (Supabase Auth)
-- ✅ Tab-based navigation (Manage Account, Billing, Track Orders, Support)
+- ✅ Tab-based navigation (Manage Account, Billing, Track Orders)
 - ✅ Professional UI with smooth transitions
 - ✅ Global error handling with dismissible error messages
 - ✅ Sign out functionality
@@ -167,37 +178,35 @@ function getTimeBasedGreeting() {
 - Empty state when no orders exist
 - Tracking input shows integration placeholder message
 
-### 5. Support Tab (`SupportTab.jsx`)
+### 5. Support & FAQ Pages
 
-**Location:** `src/components/Dashboard/Customer/SupportTab.jsx`
+**Support Page Location:** `src/app/support/page.js`
+**FAQ Page Location:** `src/app/faq/page.js`
 
 **Features:**
 
-#### AI Assistant Section
-- Prominent "Coming Soon" banner
-- Professional gradient background
-- Chat icon and description
-- Disabled button with explanation
+#### Support Page (`/support`)
+- **AI Assistant Section** - "Coming Soon" banner with professional gradient
+- **FAQ Link** - Direct link to dedicated FAQ page
+- **Contact Support Form** - Subject and message form with validation
+- **Contact Information Cards** - Email, phone, and live chat options
 
-#### FAQ System
-- 4 categories: Orders & Shipping, Returns & Refunds, Account & Security, Products & Services
-- Category tabs for easy navigation
-- Expandable/collapsible questions
-- 16 total FAQ entries (4 per category)
-- Clean, accessible accordion UI
+#### FAQ Page (`/faq`)
+- **4 Categories:** Orders & Shipping, Returns & Refunds, Account & Security, Products & Services
+- **Category Tabs** - Easy navigation between FAQ categories
+- **16 FAQ Entries** - 4 questions per category
+- **Expandable/Collapsible Accordion** - Clean, accessible UI
+- **Support Link** - Direct link back to support center
 
-#### Contact Support
-- Subject and message form
-- Email, phone, live chat contact cards
-- Support hours display
-- Form validation and loading states
-- 24-hour response time notification
+**Component Structure:**
+- `Support/AIAssistant.jsx` - AI assistant banner
+- `Support/ContactSupport.jsx` - Contact form
+- `Support/ContactInformation.jsx` - Contact cards
+- `Faq/FAQData.js` - All FAQ content
+- `Faq/FAQCategories.jsx` - Category navigation
+- `Faq/FAQQuestions.jsx` - Question/answer display
 
-**FAQ Categories:**
-1. **Orders & Shipping:** Shipping times, tracking, cancellations, rates
-2. **Returns & Refunds:** Return policy, process, refund timing, shipping costs
-3. **Account & Security:** Password reset, account updates, security, deletion
-4. **Products & Services:** Warranties, notifications, bulk pricing, authenticity
+**Note:** Support functionality has been moved from dashboard tab to dedicated pages at `/support` and `/faq` for better accessibility.
 
 ## Error Handling Strategy
 

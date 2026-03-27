@@ -12,150 +12,150 @@
  * IMPORTANT: Set STRIPE_WEBHOOK_SECRET in your environment variables
  */
 
-import { NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe/server'
-import { createClient } from '@/lib/supabase/server'
+import { NextResponse } from "next/server";
+import { stripe } from "@/lib/stripe/server";
+import { createClient } from "@/lib/supabase/server";
 
 // Disable body parsing, need raw body for webhook signature verification
-export const runtime = 'nodejs'
+export const runtime = "nodejs";
 
 export async function POST(request) {
-  const body = await request.text()
-  const signature = request.headers.get('stripe-signature')
+  const body = await request.text();
+  const signature = request.headers.get("stripe-signature");
 
   if (!signature) {
     return NextResponse.json(
-      { error: 'Missing stripe-signature header' },
-      { status: 400 }
-    )
+      { error: "Missing stripe-signature header" },
+      { status: 400 },
+    );
   }
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
-    console.error('STRIPE_WEBHOOK_SECRET is not configured')
+    console.error("STRIPE_WEBHOOK_SECRET is not configured");
     return NextResponse.json(
-      { error: 'Webhook secret not configured' },
-      { status: 500 }
-    )
+      { error: "Webhook secret not configured" },
+      { status: 500 },
+    );
   }
 
-  let event
+  let event;
 
   try {
     // Verify webhook signature
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET
-    )
+      process.env.STRIPE_WEBHOOK_SECRET,
+    );
   } catch (err) {
-    console.error('Webhook signature verification failed:', err.message)
+    console.error("Webhook signature verification failed:", err.message);
     return NextResponse.json(
       { error: `Webhook Error: ${err.message}` },
-      { status: 400 }
-    )
+      { status: 400 },
+    );
   }
 
   // Initialize Supabase client
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   try {
     // Handle different event types
     switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object
-        await handleCheckoutSessionCompleted(session, supabase)
-        break
+      case "checkout.session.completed": {
+        const session = event.data.object;
+        await handleCheckoutSessionCompleted(session, supabase);
+        break;
       }
 
-      case 'payment_intent.succeeded': {
-        const paymentIntent = event.data.object
-        await handlePaymentIntentSucceeded(paymentIntent, supabase)
-        break
+      case "payment_intent.succeeded": {
+        const paymentIntent = event.data.object;
+        await handlePaymentIntentSucceeded(paymentIntent, supabase);
+        break;
       }
 
-      case 'invoice.created':
-      case 'invoice.updated':
-      case 'invoice.payment_succeeded':
-      case 'invoice.payment_failed': {
-        const invoice = event.data.object
-        await handleInvoiceEvent(invoice, supabase)
-        break
+      case "invoice.created":
+      case "invoice.updated":
+      case "invoice.payment_succeeded":
+      case "invoice.payment_failed": {
+        const invoice = event.data.object;
+        await handleInvoiceEvent(invoice, supabase);
+        break;
       }
 
-      case 'product.created':
-      case 'product.updated': {
-        const product = event.data.object
-        await handleProductEvent(product, supabase)
-        break
+      case "product.created":
+      case "product.updated": {
+        const product = event.data.object;
+        await handleProductEvent(product, supabase);
+        break;
       }
 
-      case 'product.deleted': {
-        const product = event.data.object
-        await handleProductDeleted(product, supabase)
-        break
+      case "product.deleted": {
+        const product = event.data.object;
+        await handleProductDeleted(product, supabase);
+        break;
       }
 
-      case 'price.created':
-      case 'price.updated': {
-        const price = event.data.object
-        await handlePriceEvent(price, supabase)
-        break
+      case "price.created":
+      case "price.updated": {
+        const price = event.data.object;
+        await handlePriceEvent(price, supabase);
+        break;
       }
 
-      case 'price.deleted': {
-        const price = event.data.object
-        await handlePriceDeleted(price, supabase)
-        break
+      case "price.deleted": {
+        const price = event.data.object;
+        await handlePriceDeleted(price, supabase);
+        break;
       }
 
-      case 'customer.created':
-      case 'customer.updated': {
-        const customer = event.data.object
-        await handleCustomerEvent(customer, supabase)
-        break
+      case "customer.created":
+      case "customer.updated": {
+        const customer = event.data.object;
+        await handleCustomerEvent(customer, supabase);
+        break;
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`)
+        console.log(`Unhandled event type: ${event.type}`);
     }
 
-    return NextResponse.json({ received: true })
+    return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('Webhook handler error:', error)
+    console.error("Webhook handler error:", error);
     return NextResponse.json(
-      { error: 'Webhook handler failed' },
-      { status: 500 }
-    )
+      { error: "Webhook handler failed" },
+      { status: 500 },
+    );
   }
 }
 
 // Handler functions
 
 async function handleCheckoutSessionCompleted(session, supabase) {
-  console.log('Checkout session completed:', session.id)
+  console.log("Checkout session completed:", session.id);
 
   // Update customer_id if user is authenticated
   if (session.metadata?.user_id && session.customer) {
     await supabase
-      .from('accounts')
+      .from("customer_accounts")
       .update({ customer_id: session.customer })
-      .eq('user_id', session.metadata.user_id)
+      .eq("user_id", session.metadata.user_id);
   }
 
   // TODO: Create order record when user purchases
   // TODO: Update inventory quantities
 }
 
-async function handlePaymentIntentSucceeded(paymentIntent, supabase) {
-  console.log('Payment intent succeeded:', paymentIntent.id)
+async function handlePaymentIntentSucceeded(paymentIntent, _supabase) {
+  console.log("Payment intent succeeded:", paymentIntent.id);
   // TODO: Update order status, send confirmation email
 }
 
 async function handleInvoiceEvent(invoice, supabase) {
-  console.log('Invoice event:', invoice.id, invoice.status)
+  console.log("Invoice event:", invoice.id, invoice.status);
 
   // Upsert invoice to database
-  const { error } = await supabase.from('invoices').upsert(
+  const { error } = await supabase.from("invoices").upsert(
     {
       stripe_invoice_id: invoice.id,
       stripe_customer_id: invoice.customer,
@@ -169,7 +169,9 @@ async function handleInvoiceEvent(invoice, supabase) {
       hosted_invoice_url: invoice.hosted_invoice_url,
       invoice_pdf: invoice.invoice_pdf,
       created: new Date(invoice.created * 1000).toISOString(),
-      due_date: invoice.due_date ? new Date(invoice.due_date * 1000).toISOString() : null,
+      due_date: invoice.due_date
+        ? new Date(invoice.due_date * 1000).toISOString()
+        : null,
       period_start: invoice.period_start
         ? new Date(invoice.period_start * 1000).toISOString()
         : null,
@@ -183,19 +185,19 @@ async function handleInvoiceEvent(invoice, supabase) {
       description: invoice.description,
       metadata: invoice.metadata,
     },
-    { onConflict: 'stripe_invoice_id' }
-  )
+    { onConflict: "stripe_invoice_id" },
+  );
 
   if (error) {
-    console.error('Error upserting invoice:', error)
+    console.error("Error upserting invoice:", error);
   }
 }
 
 async function handleProductEvent(product, supabase) {
-  console.log('Product event:', product.id)
+  console.log("Product event:", product.id);
 
   // Upsert product to database
-  const { error } = await supabase.from('stripe_products').upsert(
+  const { error } = await supabase.from("stripe_products").upsert(
     {
       stripe_product_id: product.id,
       name: product.name,
@@ -213,39 +215,39 @@ async function handleProductEvent(product, supabase) {
       created: product.created,
       updated: product.updated,
     },
-    { onConflict: 'stripe_product_id' }
-  )
+    { onConflict: "stripe_product_id" },
+  );
 
   if (error) {
-    console.error('Error upserting product:', error)
+    console.error("Error upserting product:", error);
   }
 }
 
 async function handleProductDeleted(product, supabase) {
-  console.log('Product deleted:', product.id)
+  console.log("Product deleted:", product.id);
 
   const { error } = await supabase
-    .from('stripe_products')
+    .from("stripe_products")
     .delete()
-    .eq('stripe_product_id', product.id)
+    .eq("stripe_product_id", product.id);
 
   if (error) {
-    console.error('Error deleting product:', error)
+    console.error("Error deleting product:", error);
   }
 }
 
 async function handlePriceEvent(price, supabase) {
-  console.log('Price event:', price.id)
+  console.log("Price event:", price.id);
 
   // Get the local product_id first
   const { data: productData } = await supabase
-    .from('stripe_products')
-    .select('id')
-    .eq('stripe_product_id', price.product)
-    .single()
+    .from("stripe_products")
+    .select("id")
+    .eq("stripe_product_id", price.product)
+    .single();
 
   // Upsert price to database
-  const { error } = await supabase.from('stripe_prices').upsert(
+  const { error } = await supabase.from("stripe_prices").upsert(
     {
       stripe_price_id: price.id,
       stripe_product_id: price.product,
@@ -269,29 +271,29 @@ async function handlePriceEvent(price, supabase) {
       metadata: price.metadata,
       created: price.created,
     },
-    { onConflict: 'stripe_price_id' }
-  )
+    { onConflict: "stripe_price_id" },
+  );
 
   if (error) {
-    console.error('Error upserting price:', error)
+    console.error("Error upserting price:", error);
   }
 }
 
 async function handlePriceDeleted(price, supabase) {
-  console.log('Price deleted:', price.id)
+  console.log("Price deleted:", price.id);
 
   const { error } = await supabase
-    .from('stripe_prices')
+    .from("stripe_prices")
     .delete()
-    .eq('stripe_price_id', price.id)
+    .eq("stripe_price_id", price.id);
 
   if (error) {
-    console.error('Error deleting price:', error)
+    console.error("Error deleting price:", error);
   }
 }
 
-async function handleCustomerEvent(customer, supabase) {
-  console.log('Customer event:', customer.id)
+async function handleCustomerEvent(customer, _supabase) {
+  console.log("Customer event:", customer.id);
   // Customer data is already stored in Stripe, no need to duplicate
   // Just log for debugging purposes
 }

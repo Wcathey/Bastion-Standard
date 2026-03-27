@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
-export default function DiolyStory() {
+export default function FounderStory() {
   const [titleRef, titleVisible] = useScrollAnimation();
   const [section1Ref, section1Visible] = useScrollAnimation(0.2);
   const [section2Ref, section2Visible] = useScrollAnimation(0.2);
@@ -32,7 +32,10 @@ export default function DiolyStory() {
           }`}
         >
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-[0.15em] sm:tracking-[0.2em] mb-6 sm:mb-8 drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
-            DIOLY'S STORY
+            Beyond The Surface
+            <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-4">
+              A New Skin Era
+            </span>
           </h2>
           <div className="h-px w-24 sm:w-32 bg-white mx-auto shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
         </div>

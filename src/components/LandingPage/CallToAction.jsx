@@ -33,7 +33,10 @@ export default function CallToAction() {
           <div className="h-px w-32 bg-white mx-auto mb-12 shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
 
           <p className="text-lg md:text-xl font-light leading-relaxed text-gray-300 mb-12 max-w-4xl mx-auto">
-            Your routine is more than just skincare. It's a reflection of your journey, your heritage, and your commitment to self-care. Join a community of men who refuse to settle. Who understand that excellence is not a destination—it's a standard.
+            Your routine is more than just skincare. It's a reflection of your
+            journey, your heritage, and your commitment to self-care. Join a
+            community of men who refuse to settle. Who understand that
+            excellence is not a destination—it's a standard.
           </p>
         </div>
 

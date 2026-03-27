@@ -142,7 +142,9 @@ export default function FormulaSection() {
         <div
           ref={titleRef}
           className={`text-center mb-16 sm:mb-20 md:mb-24 transition-all duration-1000 ease-out ${
-            titleVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+            titleVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-10"
           }`}
         >
           <h2 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-[0.15em] sm:tracking-[0.2em] mb-6 sm:mb-8 drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]">
@@ -154,7 +156,11 @@ export default function FormulaSection() {
         {/* Vision Sections */}
         <div>
           {visionSections.map((section, index) => (
-            <VisionSection key={section.title} section={section} index={index} />
+            <VisionSection
+              key={section.title}
+              section={section}
+              index={index}
+            />
           ))}
         </div>
       </div>

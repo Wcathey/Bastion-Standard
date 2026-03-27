@@ -1,5 +1,5 @@
-import DiolyStory from "@/components/LandingPage/DiolyStory";
+import FounderStory from "@/components/LandingPage/FounderStory";
 
 export default function OurStoryPage() {
-  return <DiolyStory />;
+  return <FounderStory />;
 }

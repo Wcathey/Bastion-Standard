@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers'
-import { SignJWT } from 'jose'
+import { SignJWT } from "jose";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-)
+  process.env.JWT_SECRET || "your-secret-key-change-in-production",
+);
 
 /**
  * Admin Login API Route
@@ -14,30 +14,30 @@ const JWT_SECRET = new TextEncoder().encode(
  */
 export async function POST(request) {
   try {
-    const { employeeId, password } = await request.json()
+    const { employeeId, password } = await request.json();
 
     if (!employeeId || !password) {
       return NextResponse.json(
-        { error: 'Employee ID and password are required' },
-        { status: 400 }
-      )
+        { error: "Employee ID and password are required" },
+        { status: 400 },
+      );
     }
 
-    const supabase = await createClient()
+    const supabase = await createClient();
 
     // Fetch admin account by employee ID
     const { data: admin, error: fetchError } = await supabase
-      .from('admin_accounts')
-      .select('*')
-      .eq('employee_id', employeeId.toUpperCase())
-      .eq('is_active', true)
-      .single()
+      .from("admin_accounts")
+      .select("*")
+      .eq("employee_id", employeeId.toUpperCase())
+      .eq("is_active", true)
+      .single();
 
     if (fetchError || !admin) {
       return NextResponse.json(
-        { error: 'Invalid employee ID or password' },
-        { status: 401 }
-      )
+        { error: "Invalid employee ID or password" },
+        { status: 401 },
+      );
     }
 
     // Check if first-time login
@@ -48,61 +48,61 @@ export async function POST(request) {
           adminId: admin.id,
           employeeId: admin.employee_id,
         },
-        { status: 200 }
-      )
+        { status: 200 },
+      );
     }
 
     // Verify password using RPC function
     const { data: isValid, error: verifyError } = await supabase.rpc(
-      'verify_admin_password',
+      "verify_admin_password",
       {
         p_employee_id: employeeId.toUpperCase(),
         p_password: password,
-      }
-    )
+      },
+    );
 
     if (verifyError || !isValid) {
       return NextResponse.json(
-        { error: 'Invalid employee ID or password' },
-        { status: 401 }
-      )
+        { error: "Invalid employee ID or password" },
+        { status: 401 },
+      );
     }
 
     // Update last login time
     await supabase
-      .from('admin_accounts')
+      .from("admin_accounts")
       .update({ last_login_at: new Date().toISOString() })
-      .eq('id', admin.id)
+      .eq("id", admin.id);
 
     // Create session token
     const token = await new SignJWT({
       adminId: admin.id,
       employeeId: admin.employee_id,
-      role: 'admin',
+      role: "admin",
     })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime('24h')
-      .sign(JWT_SECRET)
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime("24h")
+      .sign(JWT_SECRET);
 
     // Store session in database
-    const expiresAt = new Date()
-    expiresAt.setHours(expiresAt.getHours() + 24)
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 24);
 
-    await supabase.from('admin_sessions').insert({
+    await supabase.from("admin_sessions").insert({
       admin_account_id: admin.id,
       session_token: token,
       expires_at: expiresAt.toISOString(),
-    })
+    });
 
     // Set HTTP-only cookie
-    const cookieStore = await cookies()
-    cookieStore.set('admin_session', token, {
+    const cookieStore = await cookies();
+    cookieStore.set("admin_session", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
       maxAge: 60 * 60 * 24, // 24 hours
-      path: '/',
-    })
+      path: "/",
+    });
 
     return NextResponse.json(
       {
@@ -115,13 +115,13 @@ export async function POST(request) {
           position: admin.position,
         },
       },
-      { status: 200 }
-    )
+      { status: 200 },
+    );
   } catch (error) {
-    console.error('Admin login error:', error)
+    console.error("Admin login error:", error);
     return NextResponse.json(
-      { error: 'An error occurred during login' },
-      { status: 500 }
-    )
+      { error: "An error occurred during login" },
+      { status: 500 },
+    );
   }
 }

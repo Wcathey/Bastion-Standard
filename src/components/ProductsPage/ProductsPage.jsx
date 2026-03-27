@@ -50,8 +50,7 @@ const allProducts = [
     name: "Hair Shampoo",
     type: "Hair Shampoo",
     line: "Simple Line",
-    image:
-      "/images/landing/Simple_Soap_Bar_Shampoo_Conditioner_Full_Set.png",
+    image: "/images/landing/Simple_Soap_Bar_Shampoo_Conditioner_Full_Set.png",
     price1: 0,
     price2: 0,
     price4: 0,
@@ -64,8 +63,7 @@ const allProducts = [
     name: "Hair Conditioner",
     type: "Hair Conditioner",
     line: "Simple Line",
-    image:
-      "/images/landing/Simple_Soap_Bar_Shampoo_Conditioner_Full_Set.png",
+    image: "/images/landing/Simple_Soap_Bar_Shampoo_Conditioner_Full_Set.png",
     price1: 0,
     price2: 0,
     price4: 0,

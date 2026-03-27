@@ -1,69 +1,80 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLoginForm() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [showPasswordReset, setShowPasswordReset] = useState(false)
+  const router = useRouter();
+  const supabase = createClient();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [formData, setFormData] = useState({
-    employeeId: '',
-    password: '',
-  })
+    email: "",
+    password: "",
+  });
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    })
-    setError(null)
-  }
+    });
+    setError(null);
+  };
 
   const handleLogin = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     try {
-      const response = await fetch('/api/admin/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          employeeId: formData.employeeId,
+      // Sign in with Supabase Auth
+      const { data: authData, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email: formData.email,
           password: formData.password,
-        }),
-      })
+        });
 
-      const data = await response.json()
+      if (authError) throw authError;
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed')
+      if (!authData.user) {
+        throw new Error("Authentication failed");
       }
 
-      // Check if first-time login
-      if (data.firstTimeLogin) {
-        // Redirect to setup page
-        router.push(
-          `/admin/setup?employeeId=${encodeURIComponent(formData.employeeId)}`
-        )
-        return
+      // Check if user exists in admin_accounts table by user_id
+      const { data: adminAccount, error: adminError } = await supabase
+        .from("admin_accounts")
+        .select("*")
+        .eq("user_id", authData.user.id)
+        .single();
+
+      if (adminError || !adminAccount) {
+        await supabase.auth.signOut();
+        throw new Error(
+          "Access denied. This account is not authorized as an administrator.",
+        );
+      }
+
+      // Check if admin is active
+      if (!adminAccount.is_active) {
+        await supabase.auth.signOut();
+        throw new Error(
+          "Your account has been deactivated. Please contact your manager.",
+        );
       }
 
       // Successful login - redirect to admin dashboard
-      router.push('/dashboard/admin')
-      router.refresh()
+      // Dashboard will handle first-time password setup check
+      router.push("/dashboard/admin");
+      router.refresh();
     } catch (err) {
-      setError(err.message)
+      setError(err.message || "Login failed. Please check your credentials.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4 py-12">
@@ -77,7 +88,7 @@ export default function AdminLoginForm() {
             </span>
           </div>
           <p className="mt-2 text-sm text-gray-400">
-            Employee access only. Unauthorized access is prohibited.
+            Sign in with your assigned business email and password
           </p>
         </div>
 
@@ -93,19 +104,19 @@ export default function AdminLoginForm() {
           <div className="space-y-4">
             <div>
               <label
-                htmlFor="employeeId"
+                htmlFor="email"
                 className="block text-sm font-medium text-gray-300 mb-1"
               >
-                Employee ID
+                Work Email
               </label>
               <input
-                id="employeeId"
-                name="employeeId"
-                type="text"
+                id="email"
+                name="email"
+                type="email"
                 required
-                value={formData.employeeId}
+                value={formData.email}
                 onChange={handleChange}
-                placeholder="EMP-XXXXXXXX-XXXX"
+                placeholder="your.name@company.com"
                 className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
             </div>
@@ -134,35 +145,12 @@ export default function AdminLoginForm() {
             disabled={loading}
             className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Authenticating...' : 'Sign In'}
+            {loading ? "Authenticating..." : "Sign In"}
           </button>
         </form>
 
         {/* Additional Links */}
         <div className="space-y-3">
-          <button
-            type="button"
-            onClick={() => setShowPasswordReset(!showPasswordReset)}
-            className="w-full text-center text-sm text-gray-400 hover:text-white hover:underline"
-          >
-            Forgot your password?
-          </button>
-
-          {showPasswordReset && (
-            <div className="bg-gray-800 border border-gray-700 rounded-md p-4">
-              <p className="text-sm text-gray-300 mb-2">
-                To reset your password, you'll need to answer one of your security
-                questions.
-              </p>
-              <Link
-                href="/admin/forgot-password"
-                className="inline-block text-sm font-medium text-red-400 hover:text-red-300 hover:underline"
-              >
-                Continue to Password Reset →
-              </Link>
-            </div>
-          )}
-
           <div className="pt-4 border-t border-gray-800">
             <Link
               href="/login"
@@ -173,12 +161,10 @@ export default function AdminLoginForm() {
           </div>
 
           <div className="text-center text-xs text-gray-500 pt-4">
-            <p>
-              New employee? Contact your manager to receive your Employee ID.
-            </p>
+            <p>New employee? Contact your manager for account setup.</p>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

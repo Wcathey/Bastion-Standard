@@ -61,7 +61,9 @@ export default function ProductGrid({
       {/* No Products Message */}
       {products.length === 0 && comingSoonProducts.length === 0 && (
         <div className="text-center py-16 sm:py-20">
-          <p className="text-white/60 text-base sm:text-lg font-light">No products found</p>
+          <p className="text-white/60 text-base sm:text-lg font-light">
+            No products found
+          </p>
         </div>
       )}
     </div>

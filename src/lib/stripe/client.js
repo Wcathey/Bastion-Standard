@@ -5,9 +5,9 @@
  * Use this in client components for Stripe Elements, checkout, etc.
  */
 
-import { loadStripe } from '@stripe/stripe-js'
+import { loadStripe } from "@stripe/stripe-js";
 
-let stripePromise
+let stripePromise;
 
 /**
  * Get Stripe.js instance
@@ -18,13 +18,13 @@ export const getStripe = () => {
   if (!stripePromise) {
     if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
       throw new Error(
-        'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not defined in environment variables'
-      )
+        "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not defined in environment variables",
+      );
     }
-    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
   }
-  return stripePromise
-}
+  return stripePromise;
+};
 
 /**
  * Format amount for display
@@ -32,11 +32,11 @@ export const getStripe = () => {
  * @param {string} currency - Currency code (default: 'usd')
  * @returns {string} Formatted amount
  */
-export function formatAmountForDisplay(amount, currency = 'usd') {
-  const numberFormat = new Intl.NumberFormat('en-US', {
-    style: 'currency',
+export function formatAmountForDisplay(amount, currency = "usd") {
+  const numberFormat = new Intl.NumberFormat("en-US", {
+    style: "currency",
     currency: currency.toUpperCase(),
     minimumFractionDigits: 2,
-  })
-  return numberFormat.format(amount / 100)
+  });
+  return numberFormat.format(amount / 100);
 }

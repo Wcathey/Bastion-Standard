@@ -1,85 +1,85 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import Link from 'next/link'
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function ForgotPasswordForm() {
-  const router = useRouter()
-  const supabase = createClient()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(false)
-  const [step, setStep] = useState(1) // 1: Enter Employee ID, 2: Select Question, 3: Answer & Reset
+  const router = useRouter();
+  const supabase = createClient();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const [step, setStep] = useState(1); // 1: Enter Employee ID, 2: Select Question, 3: Answer & Reset
 
-  const [employeeId, setEmployeeId] = useState('')
-  const [selectedQuestionId, setSelectedQuestionId] = useState('')
-  const [answer, setAnswer] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [userQuestions, setUserQuestions] = useState([])
+  const [employeeId, setEmployeeId] = useState("");
+  const [selectedQuestionId, setSelectedQuestionId] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [userQuestions, setUserQuestions] = useState([]);
 
   const handleEmployeeIdSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     try {
       // Fetch admin account to get their security questions
       const { data: admin, error: fetchError } = await supabase
-        .from('admin_accounts')
-        .select('id, security_answers')
-        .eq('employee_id', employeeId.toUpperCase())
-        .eq('is_active', true)
-        .single()
+        .from("admin_accounts")
+        .select("id, security_answers")
+        .eq("employee_id", employeeId.toUpperCase())
+        .eq("is_active", true)
+        .single();
 
       if (fetchError || !admin) {
-        throw new Error('Employee ID not found')
+        throw new Error("Employee ID not found");
       }
 
       if (!admin.security_answers || admin.security_answers.length === 0) {
-        throw new Error('No security questions set up for this account')
+        throw new Error("No security questions set up for this account");
       }
 
       // Fetch the actual questions
-      const questionIds = admin.security_answers.map((sa) => sa.question_id)
+      const questionIds = admin.security_answers.map((sa) => sa.question_id);
       const { data: questions } = await supabase
-        .from('security_questions')
-        .select('*')
-        .in('id', questionIds)
+        .from("security_questions")
+        .select("*")
+        .in("id", questionIds);
 
-      setUserQuestions(questions || [])
-      setStep(2)
+      setUserQuestions(questions || []);
+      setStep(2);
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleResetPassword = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match')
-      setLoading(false)
-      return
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
     }
 
     if (newPassword.length < 8) {
-      setError('Password must be at least 8 characters long')
-      setLoading(false)
-      return
+      setError("Password must be at least 8 characters long");
+      setLoading(false);
+      return;
     }
 
     try {
-      const response = await fetch('/api/admin/auth/reset-password', {
-        method: 'POST',
+      const response = await fetch("/api/admin/auth/reset-password", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           employeeId: employeeId.toUpperCase(),
@@ -87,24 +87,24 @@ export default function ForgotPasswordForm() {
           answer,
           newPassword,
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Password reset failed')
+        throw new Error(data.error || "Password reset failed");
       }
 
-      setSuccess(true)
+      setSuccess(true);
       setTimeout(() => {
-        router.push('/admin/login')
-      }, 3000)
+        router.push("/admin/login");
+      }, 3000);
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (success) {
     return (
@@ -114,12 +114,10 @@ export default function ForgotPasswordForm() {
           <h2 className="text-2xl font-bold text-white mb-2">
             Password Reset Successfully
           </h2>
-          <p className="text-gray-400 mb-4">
-            Redirecting to login page...
-          </p>
+          <p className="text-gray-400 mb-4">Redirecting to login page...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -136,7 +134,7 @@ export default function ForgotPasswordForm() {
               <div
                 key={s}
                 className={`h-2 w-16 rounded-full ${
-                  s <= step ? 'bg-red-600' : 'bg-gray-700'
+                  s <= step ? "bg-red-600" : "bg-gray-700"
                 }`}
               />
             ))}
@@ -152,7 +150,10 @@ export default function ForgotPasswordForm() {
 
         {/* Step 1: Enter Employee ID */}
         {step === 1 && (
-          <form onSubmit={handleEmployeeIdSubmit} className="space-y-6 bg-gray-800 p-6 rounded-lg">
+          <form
+            onSubmit={handleEmployeeIdSubmit}
+            className="space-y-6 bg-gray-800 p-6 rounded-lg"
+          >
             <div>
               <label
                 htmlFor="employeeId"
@@ -175,7 +176,7 @@ export default function ForgotPasswordForm() {
               disabled={loading}
               className="w-full py-3 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50"
             >
-              {loading ? 'Verifying...' : 'Continue'}
+              {loading ? "Verifying..." : "Continue"}
             </button>
             <Link
               href="/admin/login"
@@ -199,8 +200,8 @@ export default function ForgotPasswordForm() {
                     key={question.id}
                     type="button"
                     onClick={() => {
-                      setSelectedQuestionId(question.id)
-                      setStep(3)
+                      setSelectedQuestionId(question.id);
+                      setStep(3);
                     }}
                     className="w-full text-left px-4 py-3 bg-gray-900 border border-gray-700 rounded-md text-white hover:border-red-500 hover:bg-gray-850 transition-colors"
                   >
@@ -221,18 +222,27 @@ export default function ForgotPasswordForm() {
 
         {/* Step 3: Answer Question & Set New Password */}
         {step === 3 && (
-          <form onSubmit={handleResetPassword} className="space-y-6 bg-gray-800 p-6 rounded-lg">
+          <form
+            onSubmit={handleResetPassword}
+            className="space-y-6 bg-gray-800 p-6 rounded-lg"
+          >
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Security Question
               </label>
               <p className="text-white bg-gray-900 p-3 rounded-md">
-                {userQuestions.find((q) => q.id === selectedQuestionId)?.question_text}
+                {
+                  userQuestions.find((q) => q.id === selectedQuestionId)
+                    ?.question_text
+                }
               </p>
             </div>
 
             <div>
-              <label htmlFor="answer" className="block text-sm font-medium text-gray-300 mb-1">
+              <label
+                htmlFor="answer"
+                className="block text-sm font-medium text-gray-300 mb-1"
+              >
                 Your Answer
               </label>
               <input
@@ -288,10 +298,10 @@ export default function ForgotPasswordForm() {
               <button
                 type="button"
                 onClick={() => {
-                  setStep(2)
-                  setAnswer('')
-                  setNewPassword('')
-                  setConfirmPassword('')
+                  setStep(2);
+                  setAnswer("");
+                  setNewPassword("");
+                  setConfirmPassword("");
                 }}
                 disabled={loading}
                 className="flex-1 py-3 px-4 border border-gray-600 text-gray-300 rounded-md hover:bg-gray-700 disabled:opacity-50"
@@ -303,12 +313,12 @@ export default function ForgotPasswordForm() {
                 disabled={loading}
                 className="flex-1 py-3 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50"
               >
-                {loading ? 'Resetting...' : 'Reset Password'}
+                {loading ? "Resetting..." : "Reset Password"}
               </button>
             </div>
           </form>
         )}
       </div>
     </div>
-  )
+  );
 }

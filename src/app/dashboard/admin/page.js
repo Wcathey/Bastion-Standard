@@ -1,29 +1,42 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import AdminDashboard from '@/components/Dashboard/AdminDashboard'
+import { redirect } from "next/navigation";
+import CreateAdminPassword from "@/components/Admin/CreateAdminPassword";
+import AdminDashboard from "@/components/Dashboard/AdminDashboard";
+import { createClient } from "@/lib/supabase/server";
 
-export default async function AdminDashboardPage() {
-  const supabase = await createClient()
+export default async function AdminPage() {
+  const supabase = await createClient();
 
+  // Get authenticated user
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/login')
+    redirect("/admin/login");
   }
 
-  // Fetch account data
-  const { data: account } = await supabase
-    .from('accounts')
-    .select('*')
-    .eq('user_id', user.id)
-    .single()
+  // Fetch admin account data
+  const { data: adminAccount } = await supabase
+    .from("admin_accounts")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
 
-  // Ensure user is an admin
-  if (!account || account.user_type !== 'admin') {
-    redirect('/dashboard/customer')
+  // If no admin account exists or inactive, redirect to login (should not happen with proxy verification)
+  if (!adminAccount || !adminAccount.is_active) {
+    redirect("/admin/login");
   }
 
-  return <AdminDashboard user={user} account={account} />
+  // Check if first-time login (needs password setup)
+  if (!adminAccount.has_logged_in) {
+    return <CreateAdminPassword adminAccount={adminAccount} />;
+  }
+
+  // Update last login time
+  await supabase
+    .from("admin_accounts")
+    .update({ last_login_at: new Date().toISOString() })
+    .eq("id", adminAccount.id);
+
+  return <AdminDashboard user={user} adminAccount={adminAccount} />;
 }

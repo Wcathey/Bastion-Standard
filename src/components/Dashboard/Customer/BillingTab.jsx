@@ -1,104 +1,115 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
+import { useState } from "react";
 
 // Dummy payment methods
 const DUMMY_PAYMENT_METHODS = [
   {
-    id: '1',
-    type: 'card',
-    brand: 'Visa',
-    last4: '4242',
+    id: "1",
+    type: "card",
+    brand: "Visa",
+    last4: "4242",
     exp_month: 12,
     exp_year: 2025,
     is_default: true,
   },
   {
-    id: '2',
-    type: 'card',
-    brand: 'Mastercard',
-    last4: '5555',
+    id: "2",
+    type: "card",
+    brand: "Mastercard",
+    last4: "5555",
     exp_month: 6,
     exp_year: 2026,
     is_default: false,
   },
-]
+];
 
 // Dummy invoices (completed orders)
 const DUMMY_INVOICES = [
   {
-    id: 'INV-2024-001',
-    order_id: 'ORD-2024-001',
-    date: '2024-03-15',
+    id: "INV-2024-001",
+    order_id: "ORD-2024-001",
+    date: "2024-03-15",
     amount: 49.99,
-    status: 'paid',
-    description: 'Order #ORD-2024-001',
-    payment_method_last4: '4242',
+    status: "paid",
+    description: "Order #ORD-2024-001",
+    payment_method_last4: "4242",
   },
   {
-    id: 'INV-2024-002',
-    order_id: 'ORD-2023-045',
-    date: '2024-02-15',
+    id: "INV-2024-002",
+    order_id: "ORD-2023-045",
+    date: "2024-02-15",
     amount: 129.99,
-    status: 'paid',
-    description: 'Order #ORD-2023-045',
-    payment_method_last4: '4242',
+    status: "paid",
+    description: "Order #ORD-2023-045",
+    payment_method_last4: "4242",
   },
   {
-    id: 'INV-2024-003',
-    order_id: 'ORD-2023-023',
-    date: '2024-01-15',
+    id: "INV-2024-003",
+    order_id: "ORD-2023-023",
+    date: "2024-01-15",
     amount: 79.99,
-    status: 'paid',
-    description: 'Order #ORD-2023-023',
-    payment_method_last4: '5555',
+    status: "paid",
+    description: "Order #ORD-2023-023",
+    payment_method_last4: "5555",
   },
-]
+];
 
 export default function BillingTab({ user, account, onError, onSuccess }) {
-  const [showAddPayment, setShowAddPayment] = useState(false)
+  const [showAddPayment, setShowAddPayment] = useState(false);
 
   const handleAddPaymentMethod = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     // TODO: Integrate with Stripe
-    onError('Payment integration coming soon. This feature requires Stripe setup.')
-    setShowAddPayment(false)
-  }
+    onError(
+      "Payment integration coming soon. This feature requires Stripe setup.",
+    );
+    setShowAddPayment(false);
+  };
 
-  const handleSetDefault = (methodId) => {
+  const handleSetDefault = (_methodId) => {
     // TODO: Integrate with Stripe
-    onError('Payment integration coming soon. This feature requires Stripe setup.')
-  }
+    onError(
+      "Payment integration coming soon. This feature requires Stripe setup.",
+    );
+  };
 
-  const handleRemovePayment = (methodId) => {
+  const handleRemovePayment = (_methodId) => {
     // TODO: Integrate with Stripe
-    onError('Payment integration coming soon. This feature requires Stripe setup.')
-  }
+    onError(
+      "Payment integration coming soon. This feature requires Stripe setup.",
+    );
+  };
 
-  const handleDownloadInvoice = (invoiceId) => {
+  const handleDownloadInvoice = (_invoiceId) => {
     // TODO: Integrate with Stripe
-    onError('Invoice download coming soon. This feature requires Stripe setup.')
-  }
+    onError(
+      "Invoice download coming soon. This feature requires Stripe setup.",
+    );
+  };
 
   return (
     <div className="space-y-8">
       {/* Stripe Integration Notice */}
       <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
         <p className="text-sm text-blue-800">
-          <strong>Note:</strong> Payment and billing features are currently using
-          dummy data. Stripe integration is required to enable full functionality.
+          <strong>Note:</strong> Payment and billing features are currently
+          using dummy data. Stripe integration is required to enable full
+          functionality.
         </p>
       </div>
 
       {/* Payment Methods */}
       <div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">Payment Methods</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Payment Methods
+          </h2>
           <button
             onClick={() => setShowAddPayment(!showAddPayment)}
             className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors text-sm"
           >
-            {showAddPayment ? 'Cancel' : 'Add Payment Method'}
+            {showAddPayment ? "Cancel" : "Add Payment Method"}
           </button>
         </div>
 
@@ -151,7 +162,8 @@ export default function BillingTab({ user, account, onError, onSuccess }) {
                 Add Card
               </button>
               <p className="text-xs text-gray-500">
-                This is a demo form. Stripe integration required for real payments.
+                This is a demo form. Stripe integration required for real
+                payments.
               </p>
             </form>
           </div>
@@ -166,10 +178,12 @@ export default function BillingTab({ user, account, onError, onSuccess }) {
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-8 bg-gray-100 rounded flex items-center justify-center">
-                  {method.brand === 'Visa' && (
-                    <span className="text-xs font-bold text-blue-600">VISA</span>
+                  {method.brand === "Visa" && (
+                    <span className="text-xs font-bold text-blue-600">
+                      VISA
+                    </span>
                   )}
-                  {method.brand === 'Mastercard' && (
+                  {method.brand === "Mastercard" && (
                     <span className="text-xs font-bold text-red-600">MC</span>
                   )}
                 </div>
@@ -264,9 +278,9 @@ export default function BillingTab({ user, account, onError, onSuccess }) {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        invoice.status === 'paid'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
+                        invoice.status === "paid"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
                       {invoice.status}
@@ -292,5 +306,5 @@ export default function BillingTab({ user, account, onError, onSuccess }) {
         )}
       </div>
     </div>
-  )
+  );
 }
